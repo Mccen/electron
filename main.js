@@ -2,12 +2,30 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const db = require('./js/db'); // 引入数据库模块
 
-let mainWindow;
-
-function createWindow(url) {
-  mainWindow = new BrowserWindow({
+let mainWindow,initWindow;
+function init(url) {
+  initWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    autoHideMenuBar: true, // 自动隐藏菜单栏
+    webPreferences: {
+      nodeIntegration: false,       // 禁用 Node.js 集成
+      contextIsolation: true,     // 启用上下文隔离
+      preload: path.join(__dirname, 'preload.js') // 使用预加载脚本
+    }
+  });
+
+  initWindow.loadFile(path.join(__dirname, url));
+
+  // 关闭窗口时的处理
+  initWindow.on('closed', () => {
+    initWindow = null;
+  });
+}
+function createWindow(url) {
+  mainWindow = new BrowserWindow({
+    width: 1280,
+    height: 720,
     autoHideMenuBar: true, // 自动隐藏菜单栏
     webPreferences: {
       nodeIntegration: false,       // 禁用 Node.js 集成
@@ -26,11 +44,11 @@ function createWindow(url) {
 }
 
 app.whenReady().then(() => {
-  createWindow('html/login.html');
+  init('html/login.html');
 
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow('html/login.html');
+      init('html/login.html');
     }
   });
 
@@ -90,22 +108,23 @@ app.whenReady().then(() => {
 
   // 监听登录成功的消息
   ipcMain.on('login-successful', () => {
-    mainWindow.loadFile(path.join(__dirname, './html/index.html'));
+    initWindow.close();
+    createWindow('./html/index.html');
   });
 
   // 监听导航到登录页面的消息
   ipcMain.on('navigate-to-login', () => {
-    mainWindow.loadFile(path.join(__dirname, './html/login.html'));
+    initWindow.loadFile(path.join(__dirname, './html/login.html'));
   });
 
   // 监听注册成功的消息
   ipcMain.on('registration-successful', () => {
-    mainWindow.loadFile(path.join(__dirname, './html/login.html'));
+    initWindow.loadFile(path.join(__dirname, './html/login.html'));
   });
 
   // 监听导航到注册页面的消息
   ipcMain.on('navigate-to-register', () => {
-    mainWindow.loadFile(path.join(__dirname, './html/register.html'));
+    initWindow.loadFile(path.join(__dirname, './html/register.html'));
   });
 });
 
