@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/register.css">
+  <title>注册</title>
+</head>
+<body>
+  <div class="register-form">
+    <div id="draggable-region">
+      <h2>注册</h2>
+    </div>
+    <form id="register-form">
+      <label for="username">用户名:</label>
+      <input type="text" id="username" name="username" required>
+      <span id="username-status" class="error"></span> <!-- 用户名存在提示 -->
+      <br>
+      <label for="password">密码:</label>
+      <input type="password" id="password" name="password" required>
+      <span id="password-error" class="error"></span> <!-- 密码错误提示 -->
+
+      <button type="submit">注册</button>
+    </form>
+    <p>已有账号? <a href="./login.html">前往登录</a></p>
+  </div>
+
+  <script src="../js/renderer.js"></script>
+</body>
+</html>

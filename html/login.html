@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/login.css">
+  <title>登录</title>
+</head>
+<body>
+  <div class="login-form">
+    <div id="draggable-region">
+      <h2>登录</h2>
+    </div>
+    <form id="login-form">
+      <label for="username">用户名:</label>
+      <input type="text" id="username" name="username" required>
+      <span id="username-error" class="error"></span> <!-- 新增错误提示 -->
+<br>
+      <label for="password">密码:</label>
+      <input type="password" id="password" name="password" required>
+      <span id="password-error" class="error"></span> <!-- 新增错误提示 -->
+
+      <button type="submit">登录</button>
+    </form>
+    <p>还没有账号? <a href="./register.html">前往注册</a></p>
+  </div>
+
+  <script src="../js/renderer.js"></script>
+</body>
+</html>
