@@ -2,7 +2,9 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const db = require('./js/db'); // 引入数据库模块
 
-let mainWindow,initWindow;
+let mainWindow, initWindow;
+let showusername = 'unknown';
+
 function init(url) {
   initWindow = new BrowserWindow({
     width: 800,
@@ -21,7 +23,14 @@ function init(url) {
   initWindow.on('closed', () => {
     initWindow = null;
   });
+
+  // 监听页面加载完成事件
+  initWindow.webContents.on('did-finish-load', () => {
+    console.log('Page finished loading');
+    initWindow.webContents.send('page-loaded');
+  });
 }
+
 function createWindow(url) {
   mainWindow = new BrowserWindow({
     width: 1280,
@@ -40,6 +49,12 @@ function createWindow(url) {
   mainWindow.on('closed', () => {
     mainWindow = null;
     app.quit(); // 关闭应用程序
+  });
+
+  // 监听页面加载完成事件
+  mainWindow.webContents.on('did-finish-load', () => {
+    console.log('Page finished loading');
+    mainWindow.webContents.send('page-loaded');
   });
 }
 
@@ -107,8 +122,9 @@ app.whenReady().then(() => {
   });
 
   // 监听登录成功的消息
-  ipcMain.on('login-successful', () => {
+  ipcMain.on('login-successful', (event, username) => {
     initWindow.close();
+    showusername = username;
     createWindow('./html/index.html');
   });
 
@@ -125,6 +141,106 @@ app.whenReady().then(() => {
   // 监听导航到注册页面的消息
   ipcMain.on('navigate-to-register', () => {
     initWindow.loadFile(path.join(__dirname, './html/register.html'));
+  });
+
+  // 获取用户名
+  ipcMain.handle('get-username', async (event) => {
+    try {
+      return showusername;
+    } catch (error) {
+      console.error('Error getting username from variable:', error);
+      throw error;
+    }
+  });
+
+  // 获取用户ID
+  ipcMain.handle('get-user-id-by-username', async (event, username) => {
+    try {
+      return await new Promise((resolve, reject) => {
+        db.getUserIdByUsername(username, (err, userId) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(userId);
+          }
+        });
+      });
+    } catch (error) {
+      console.error('Error getting user ID by username:', error);
+      throw error;
+    }
+  });
+
+  // 获取设备列表
+  ipcMain.handle('get-device-list-by-user-id', async (event, userId) => {
+    try {
+      return await new Promise((resolve, reject) => {
+        db.getDeviceListByUserId(userId, (err, devices) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(devices);
+          }
+        });
+      });
+    } catch (error) {
+      console.error('Error getting device list by user ID:', error);
+      throw error;
+    }
+  });
+
+  // 添加设备
+  ipcMain.handle('add-device', async (event, userId, deviceName) => {
+    try {
+      return await new Promise((resolve, reject) => {
+        db.addDevice(userId, deviceName, (err, added) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(added);
+          }
+        });
+      });
+    } catch (error) {
+      console.error('Error adding device:', error);
+      throw error;
+    }
+  });
+
+  // 删除设备
+  ipcMain.handle('remove-device', async (event, deviceId) => {
+    try {
+      return await new Promise((resolve, reject) => {
+        db.removeDevice(deviceId, (err, removed) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(removed);
+          }
+        });
+      });
+    } catch (error) {
+      console.error('Error removing device:', error);
+      throw error;
+    }
+  });
+
+  // 更新设备
+  ipcMain.handle('update-device', async (event, deviceId, newDeviceName) => {
+    try {
+      return await new Promise((resolve, reject) => {
+        db.updateDevice(deviceId, newDeviceName, (err, updated) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(updated);
+          }
+        });
+      });
+    } catch (error) {
+      console.error('Error updating device:', error);
+      throw error;
+    }
   });
 });
 

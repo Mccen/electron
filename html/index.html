@@ -1,11 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-    </head>
-    <body>
-        <div id="app"></div>
-        <h1>test</h1>
-    </body>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/styles.css">
+  <title>用户面板</title>
+</head>
+<body>
+  <div id="user-panel" class="login-form">
+    <div id="draggable-region">
+      <h2>用户面板</h2>
+    </div>
+    <p>用户名: <span id="showusername"></span></p>
+    <h3>设备列表</h3>
+    <ul id="device-list">
+    </ul>
+    <button id="add-device-button">添加设备</button>
+  </div>
 
+  <script src="../js/renderer.js"></script>
+</body>
 </html>

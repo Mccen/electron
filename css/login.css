@@ -131,6 +131,31 @@
   }
 
   .modal-content button {
-    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+    margin: 0.5rem;
+  }
+
+  .modal-content button:hover {
+    background-color: #0056b3;
+  }
+
+  .modal-content button.cancel {
+    background-color: #dc3545;
+  }
+
+  .modal-content button.cancel:hover {
+    background-color: #c82333;
+  }
+
+  .error {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
   }

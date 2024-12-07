@@ -83,5 +83,57 @@ module.exports = {
       }
       callback(null, results.length === 0); // true 表示用户名可用
     });
+  },
+  getUserIdByUsername: (username, callback) => {
+    const sql = 'SELECT UserID FROM user WHERE Username = ?';
+    connection.execute(sql, [username], (err, results) => {
+      if (err) {
+        console.error('Error executing SQL query:', err);
+        return callback(err, null);
+      }
+      callback(null, results[0]?.UserID);
+    });
+  },
+  getDeviceListByUserId: (userId, callback) => {
+    const sql = 'SELECT DeviceID, DeviceName FROM device WHERE UserID = ?';
+    connection.execute(sql, [userId], (err, results) => {
+      if (err) {
+        console.error('Error executing SQL query:', err);
+        return callback(err, null);
+      }
+      console.log('Devices fetched:', results); // 添加调试信息
+      callback(null, results);
+    });
+  },
+  addDevice: (userId, deviceName, callback) => {
+    const deviceId = uuidv4(); // 生成 UUID
+    const sql = 'INSERT INTO device (DeviceID, DeviceName, UserID) VALUES (?, ?, ?)';
+    connection.execute(sql, [deviceId, deviceName, userId], (err, results) => {
+      if (err) {
+        console.error('Error adding device:', err);
+        return callback(err, false);
+      }
+      callback(null, true);
+    });
+  },
+  removeDevice: (deviceId, callback) => {
+    const sql = 'DELETE FROM device WHERE DeviceID = ?';
+    connection.execute(sql, [deviceId], (err, results) => {
+      if (err) {
+        console.error('Error removing device:', err);
+        return callback(err, false);
+      }
+      callback(null, true);
+    });
+  },
+  updateDevice: (deviceId, newDeviceName, callback) => {
+    const sql = 'UPDATE device SET DeviceName = ? WHERE DeviceID = ?';
+    connection.execute(sql, [newDeviceName, deviceId], (err, results) => {
+      if (err) {
+        console.error('Error updating device:', err);
+        return callback(err, false);
+      }
+      callback(null, true);
+    });
   }
 };
